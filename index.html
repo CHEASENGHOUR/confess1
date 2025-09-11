@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do You Love Me?</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .card {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(255, 105, 180, 0.3);
+            border: 3px solid #ff69b4;
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            color: #ff1493;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(255, 20, 147, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-family: inherit;
+        }
+
+        .btn-yes {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: 3px solid #ff4757;
+        }
+
+        .btn-yes:hover {
+            background: linear-gradient(45deg, #ff5252, #ff7979);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 71, 87, 0.4);
+        }
+
+        .btn-no {
+            background: linear-gradient(45deg, #a8a8a8, #c8c8c8);
+            color: white;
+            border: 3px solid #888;
+            transition: all 0.3s ease;
+        }
+
+        .btn-no:hover {
+            background: linear-gradient(45deg, #999, #b9b9b9);
+            transform: translateY(-2px);
+        }
+
+        .heart-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            z-index: 1000;
+        }
+
+        .big-heart {
+            position: absolute;
+            top: 15%;
+            font-size: 4em;
+            color: #ff1493;
+            animation: heartbeat 1.5s infinite;
+            text-shadow: 0 0 50px rgba(255, 20, 147, 0.8);
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1.2); }
+            75% { transform: scale(1.1); }
+        }
+
+        .love-message {
+            position: absolute;
+            top: 80%;
+            /* left: 0%; */
+            /* transform: translateX(-50%); */
+            color: #ff1493;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(255, 20, 147, .9);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate(0%, 20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(0%, 0);
+            }
+        }
+
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: #ff69b4;
+            font-size: 2em;
+            animation: float 3s ease-in-out infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        #hug{
+            border-radius: 20px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card" id="card">
+        <img src="./Bubu Bubbu Sticker - Bubu Bubbu Bear - Discover & Share GIFs.gif" alt="">
+        <h1>💕 Do You Love Me? 💕</h1>
+        <div class="buttons-container">
+            <button class="btn btn-yes" id="yesBtn">Yes! 💖</button>
+            <button class="btn btn-no" id="noBtn">No</button>
+        </div>
+    </div>
+
+    <div class="heart-container" id="heartContainer">
+        <img src="./Cheriuzzina Sticker - Cheriuzzina - Discover & Share GIFs.gif" id="hug" alt="">
+        <div class="big-heart">❤️</div>
+        <div class="love-message">I Love You Too! 💕</div>
+        <div class="floating-hearts" id="floatingHearts"></div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const card = document.getElementById('card');
+        const heartContainer = document.getElementById('heartContainer');
+        const floatingHearts = document.getElementById('floatingHearts');
+        
+        let noBtnScale = 1;
+        let noBtnClicks = 0;
+
+        // Handle "No" button clicks - make "Yes" button bigger
+        noBtn.addEventListener('click', function() {
+            noBtnClicks++;
+            noBtnScale += 0.3;
+            
+            // Make the Yes button bigger
+            yesBtn.style.transform = `scale(${noBtnScale})`;
+            yesBtn.style.zIndex = '100';
+            
+            // Add some playful messages
+            const messages = [
+                "Are you sure? 🥺",
+                "Really? 😢",
+                "Please reconsider! 💔",
+                "I'm getting bigger! 😊",
+                "You can't escape love! 💕"
+            ];
+            
+            if (noBtnClicks <= messages.length) {
+                const messageDiv = document.createElement('div');
+                messageDiv.textContent = messages[noBtnClicks - 1];
+                messageDiv.style.cssText = `
+                    position: absolute;
+                    top: -50px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    color: #ff1493;
+                    font-size: 1.2em;
+                    font-weight: bold;
+                    animation: fadeInOut 2s ease-out forwards;
+                `;
+                
+                card.appendChild(messageDiv);
+                
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 2000);
+            }
+            
+            // After several clicks, make the "Yes" button cover the "No" button
+            if (noBtnClicks >= 4) {
+                noBtn.style.opacity = '0';
+                noBtn.style.pointerEvents = 'none';
+                yesBtn.textContent = '💖 Yes! I Love You! 💖';
+            }
+        });
+
+        // Handle "Yes" button click - show big heart and open Telegram
+        yesBtn.addEventListener('click', function() {
+            heartContainer.style.display = 'flex';
+            
+            // Create floating hearts animation
+            createFloatingHearts();
+            
+            // Play a celebration animation
+            setTimeout(() => {
+                createFireworks();
+            }, 500);
+            
+            // Open Telegram chat with pre-filled message after a short delay
+            setTimeout(() => {
+                window.open('https://t.me/Chea_SengHour?text=I%20love%20u%20💕', '_blank');
+            }, 4000);
+        });
+
+        // Create floating hearts
+        function createFloatingHearts() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'floating-heart';
+                    heart.textContent = '💖';
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.animationDelay = Math.random() * 2 + 's';
+                    heart.style.animationDuration = (3 + Math.random() * 2) + 's';
+                    floatingHearts.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        if (heart.parentNode) {
+                            heart.remove();
+                        }
+                    }, 5000);
+                }, i * 200);
+            }
+        }
+
+        // Create fireworks effect
+        function createFireworks() {
+            const colors = ['💖', '💕', '💗', '💘', '💝'];
+            
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.textContent = colors[Math.floor(Math.random() * colors.length)];
+                    firework.style.cssText = `
+                        position: fixed;
+                        font-size: 3em;
+                        left: ${Math.random() * 100}%;
+                        top: ${Math.random() * 100}%;
+                        animation: explode 1s ease-out forwards;
+                        z-index: 1001;
+                    `;
+                    
+                    document.body.appendChild(firework);
+                    
+                    setTimeout(() => {
+                        if (firework.parentNode) {
+                            firework.remove();
+                        }
+                    }, 1000);
+                }, i * 100);
+            }
+        }
+
+        // Add CSS animation for messages and fireworks
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translate(-50%, 10px); }
+                50% { opacity: 1; transform: translate(-50%, 0); }
+                100% { opacity: 0; transform: translate(-50%, -10px); }
+            }
+            
+            @keyframes explode {
+                0% { transform: scale(0) rotate(0deg); opacity: 1; }
+                100% { transform: scale(2) rotate(360deg); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
